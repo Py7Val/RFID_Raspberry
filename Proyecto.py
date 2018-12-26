@@ -16,8 +16,8 @@ from sense_hat import SenseHat
 
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "xxxxxxxxxxxx@gmail.com"
-direccion_destino = "xxxxxxxxxxxx@gmail.com"
+direccion_fuente = "ajtv7777777@gmail.com"
+direccion_destino = "ajtv7777777@gmail.com"
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
@@ -120,12 +120,12 @@ while lectura_continua:
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "xxxxXXXXX")
+            server.login(direccion_fuente, "sdaaMIERA")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
             msg['Subject'] = "[Alerta de Seguridad] Intento de acceso a su casa"
-
+            # Configuramos el cuerpo de mensaje y adjuntamos la imagen hecha
             cuerpo_mensaje = "Se ha recibido una alerta de que alguien sin permiso de autorización ha intentado acceder a su casa el " + time.strftime("%d %b %Y a las %H:%M:%S. Por favor, no responda a este mensaje, se trata de un mensaje automatizado y solo se ha enviado para informar de la alerta.")
             msg.attach(MIMEText(cuerpo_mensaje, 'plain'))
             archivo = "imagen.jpg"
@@ -135,9 +135,7 @@ while lectura_continua:
             encoders.encode_base64(part)
             part.add_header('Content-Disposition', "attachment; filename= %s" % archivo)
             msg.attach(part)
-
             texto = msg.as_string()
-
             try:
                 print "Enviando alerta de seguridad al correo"
                 print server.sendmail(direccion_fuente, direccion_destino, texto)
