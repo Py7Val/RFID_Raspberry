@@ -53,9 +53,6 @@ while lectura_continua:
 
         # Congelamos tiempo 2s
         time.sleep(1)
-        
-        #Añadimos carácter nueva línea
-        print "\n"
 
         # Si la tarjeta tiene el UID que buscamos se permite el acceso
         if uid[0] == 227 and uid[1] == 93 and uid[2] == 65 and uid[3] == 197:
@@ -74,8 +71,9 @@ while lectura_continua:
             sense.set_pixels(question_mark)
             time.sleep(1)
             # Mensaje de bienvenida
-            sense.show_message('BIENVENIDO',text_colour=[100,100,100])
-
+            print "Bienvenido a casa\n"
+            sense.show_message('BIENVENIDO',text_colour=[100,100,100], scroll_speed = 0.05)
+        
         # Si no tiene esa ID
         else:
 
@@ -92,7 +90,9 @@ while lectura_continua:
 
             sense.set_pixels(question_mark)
             time.sleep(1)
-            sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100])
+            # Acceso denegado
+            print "Error de autenticación\n"
+            sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
 
 # ------------LECTURA SENSORES--------------------------
 
