@@ -11,9 +11,8 @@ from sense_hat import SenseHat
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
 
-# Creamos objeto de Sense Hat, de la Pi Cámara y del RFID
+# Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
-camera = PiCamera()
 MIFAREReader = MFRC522.MFRC522()
 
 # Variable para hacer el bucle de lecturas de tarjetas RFID
@@ -50,13 +49,22 @@ while lectura_continua:
     if status == MIFAREReader.MI_OK:
 
         print "Lectura tarjeta User ID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3])
-
-        # Congelamos tiempo 2s
+        # Congelamos tiempo 1s
         time.sleep(1)
+        # Hacemos foto para ver quién está intentando acceder.
+        # Creamos objeto de la PiCámara y la cerramos al final
+        camera = PiCamera()
+        camera.resolution = (640,480)
+        camera.rotation = 180
+        camera.start_preview(fullscreen=False, window=(30,30,320,240))
+        camera.capture('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg')
+        photo = open('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg','rb')
+        camera.close()
 
         # Si la tarjeta tiene el UID que buscamos se permite el acceso
         if uid[0] == 227 and uid[1] == 93 and uid[2] == 65 and uid[3] == 197:
 
+            #Pantalla en verde
             question_mark = [
             G, G, G, G, G, G, G, G,
             G, G, G, G, G, G, G, G,
@@ -70,13 +78,13 @@ while lectura_continua:
 
             sense.set_pixels(question_mark)
             time.sleep(1)
-            # Mensaje de bienvenida
+            
+            # Mensaje de bienvenida por pantalla y por Sense Hat
             print "Bienvenido a casa\n"
             sense.show_message('BIENVENIDO',text_colour=[100,100,100], scroll_speed = 0.05)
         
-        # Si no tiene esa ID
         else:
-
+            # Si no tiene esa ID la Sense Hat entera en rojo
             question_mark = [
             R, R, R, R, R, R, R, R,
             R, R, R, R, R, R, R, R,
@@ -90,7 +98,8 @@ while lectura_continua:
 
             sense.set_pixels(question_mark)
             time.sleep(1)
-            # Acceso denegado
+            
+            # Acceso denegado por pantalla y Sense Hat
             print "Error de autenticación\n"
             sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
 
@@ -113,50 +122,13 @@ sense.show_message("H:"+HStr)
 PStr=str(round(Presion,2))
 sense.show_message("P:"+PStr)
 
-# -----------------------------------CAPTURA FOTO-----------------
-
-
-
-
-camera.resolution = (640,480)
-camera.rotation = 180
-camera.start_preview(fullscreen=False, window=(30,30,320,240))
-for i in range(0,5):
-    print 5-i
-    sleep(1)
-camera.capture('/home/pi/imagen.jpg')
-camera.stop_preview()
-camera.close()
-
 
 # ----------------- SENSEHAT COLORES Y ESCRIBIR ----------------------------
 
 
-nombre = raw_input("Dime tu nombre: ")
 
 sense.show_message('Hola,',text_colour=[100,100,100])
 sense.show_message(nombre,scroll_speed=0.2, text_colour=[0,100,0])
 time.sleep(1)
 sense.clear()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     
