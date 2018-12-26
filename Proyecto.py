@@ -16,9 +16,8 @@ from sense_hat import SenseHat
 
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "xxxxxxx@gmail.com"
-direccion_destino = "xxxxxxx@gmail.com"
-server = smtplib.SMTP('smtp.gmail.com', 587)
+direccion_fuente = "ajtv7777777@gmail.com"
+direccion_destino = "ajtv7777777@gmail.com"
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
@@ -109,36 +108,49 @@ while lectura_continua:
             camera.resolution = (640,480)
             camera.rotation = 180
             camera.start_preview(fullscreen=False, window=(30,30,320,240))
+            for i in range(0,1):
+                1-i
+                time.sleep(1)
             camera.capture('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg')
-            photo = open('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg','rb')
+            camera.stop_preview()
             camera.close()
         
             sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
-            
+
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
+            server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "xxxxXXXXX")
+            server.login(direccion_fuente, "sdaaMIERA")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
-            msg['Subject'] = "Alerta de Seguridad: Intento de acceso a su casa"
+            msg['Subject'] = "[Alerta de Seguridad] Intento de acceso a su casa"
 
-            cuerpo_mensaje = "Alguien con permiso no autorizado ha intentado acceder a su casa el " + time.strftime("%d %b %Y a las %H:%M:%S")
+            cuerpo_mensaje = "Se ha recibido una alerta de que alguien sin permiso de autorización ha intentado acceder a su casa el " + time.strftime("%d %b %Y a las %H:%M:%S. Por favor, no responda a este mensaje, se trata de un mensaje automatizado y solo se ha enviado para informar de la alerta.")
             msg.attach(MIMEText(cuerpo_mensaje, 'plain'))
+            archivo = "imagen.jpg"
+            adjunto = open(archivo, "rb")
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload((adjunto).read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', "attachment; filename= %s" % archivo)
+            msg.attach(part)
 
             texto = msg.as_string()
-            print texto
 
             try:
-                print "Enviando correo"
+                print "Enviando alerta de seguridad al correo"
                 print server.sendmail(direccion_fuente, direccion_destino, texto)
+                server.quit()
             except:
                 print "Error al enviar el correo"
                 server.quit()
             print "\n"    
-            server.quit()
-
+            
+            
 # ------------LECTURA SENSORES--------------------------
+
+
 
 Humedad=sense.get_humidity()
 Temp1=sense.get_temperature_from_humidity()
