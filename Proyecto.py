@@ -23,6 +23,7 @@ def end_read(signal,frame):
     global lectura_continua
     print "Lectura finalizada"
     lectura_continua = False
+    sense.clear()
     GPIO.cleanup()
 
 # Para coger la señal
@@ -51,15 +52,6 @@ while lectura_continua:
         print "Lectura tarjeta User ID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3])
         # Congelamos tiempo 1s
         time.sleep(1)
-        # Hacemos foto para ver quién está intentando acceder.
-        # Creamos objeto de la PiCámara y la cerramos al final
-        camera = PiCamera()
-        camera.resolution = (640,480)
-        camera.rotation = 180
-        camera.start_preview(fullscreen=False, window=(30,30,320,240))
-        camera.capture('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg')
-        photo = open('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg','rb')
-        camera.close()
 
         # Si la tarjeta tiene el UID que buscamos se permite el acceso
         if uid[0] == 227 and uid[1] == 93 and uid[2] == 65 and uid[3] == 197:
@@ -101,6 +93,17 @@ while lectura_continua:
             
             # Acceso denegado por pantalla y Sense Hat
             print "Error de autenticación\n"
+
+            # Hacemos foto para ver quién está intentando acceder.
+            # Creamos objeto de la PiCámara y la cerramos al final
+            camera = PiCamera()
+            camera.resolution = (640,480)
+            camera.rotation = 180
+            camera.start_preview(fullscreen=False, window=(30,30,320,240))
+            camera.capture('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg')
+            photo = open('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg','rb')
+            camera.close()
+        
             sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
 
 # ------------LECTURA SENSORES--------------------------
@@ -121,14 +124,4 @@ HStr=str(round(Humedad,2))
 sense.show_message("H:"+HStr)
 PStr=str(round(Presion,2))
 sense.show_message("P:"+PStr)
-
-
-# ----------------- SENSEHAT COLORES Y ESCRIBIR ----------------------------
-
-
-
-sense.show_message('Hola,',text_colour=[100,100,100])
-sense.show_message(nombre,scroll_speed=0.2, text_colour=[0,100,0])
-time.sleep(1)
-sense.clear()
     
