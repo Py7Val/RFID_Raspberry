@@ -6,10 +6,19 @@ import RPi.GPIO as GPIO
 import MFRC522
 import signal
 import time
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEBase import MIMEBase
+from email import encoders
 from picamera import PiCamera
 from sense_hat import SenseHat
+
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
+direccion_fuente = "xxxxxxx@gmail.com"
+direccion_destino = "xxxxxxx@gmail.com"
+server = smtplib.SMTP('smtp.gmail.com', 587)
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
@@ -105,10 +114,31 @@ while lectura_continua:
             camera.close()
         
             sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
+            
+            # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
+            server.starttls()
+            server.login(direccion_fuente, "xxxxXXXXX")
+            msg = MIMEMultipart()
+            msg['From'] = direccion_fuente
+            msg['To'] = direccion_destino
+            msg['Subject'] = "Alerta de Seguridad: Intento de acceso a su casa"
+
+            cuerpo_mensaje = "Alguien con permiso no autorizado ha intentado acceder a su casa el " + time.strftime("%d %b %Y a las %H:%M:%S")
+            msg.attach(MIMEText(cuerpo_mensaje, 'plain'))
+
+            texto = msg.as_string()
+            print texto
+
+            try:
+                print "Enviando correo"
+                print server.sendmail(direccion_fuente, direccion_destino, texto)
+            except:
+                print "Error al enviar el correo"
+                server.quit()
+            print "\n"    
+            server.quit()
 
 # ------------LECTURA SENSORES--------------------------
-
-
 
 Humedad=sense.get_humidity()
 Temp1=sense.get_temperature_from_humidity()
