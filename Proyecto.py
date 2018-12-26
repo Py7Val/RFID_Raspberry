@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-# Importamos librerías
+# Importamos librerías y definimos variables
 import RPi.GPIO as GPIO
 import MFRC522
 import signal
 import time
 from picamera import PiCamera
 from sense_hat import SenseHat
+R = [255, 0, 0]  # Rojo
+G = [0, 255, 0]  # Verde
 
 # Creamos objeto de Sense Hat, de la Pi Cámara y del RFID
 sense=SenseHat()
@@ -27,7 +29,7 @@ def end_read(signal,frame):
 # Para coger la señal
 signal.signal(signal.SIGINT, end_read)
 
-# Mensaje comienzo
+# Mensaje comienzo del proceso
 print "Bienvenido"
 print "Presiona Ctrl-C para parar el proceso\n"
 
@@ -46,13 +48,51 @@ while lectura_continua:
 
     # Si tenemos la ID, nos la imprime por pantalla
     if status == MIFAREReader.MI_OK:
-        
+
         print "Lectura tarjeta User ID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3])
-        time.sleep(2)
+
+        # Congelamos tiempo 2s
+        time.sleep(1)
+        
         #Añadimos carácter nueva línea
         print "\n"
 
+        # Si la tarjeta tiene el UID que buscamos se permite el acceso
+        if uid[0] == 227 and uid[1] == 93 and uid[2] == 65 and uid[3] == 197:
 
+            question_mark = [
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G,
+            G, G, G, G, G, G, G, G
+            ]
+
+            sense.set_pixels(question_mark)
+            time.sleep(1)
+            # Mensaje de bienvenida
+            sense.show_message('BIENVENIDO',text_colour=[100,100,100])
+
+        # Si no tiene esa ID
+        else:
+
+            question_mark = [
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R,
+            R, R, R, R, R, R, R, R
+            ]
+
+            sense.set_pixels(question_mark)
+            time.sleep(1)
+            sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100])
 
 # ------------LECTURA SENSORES--------------------------
 
