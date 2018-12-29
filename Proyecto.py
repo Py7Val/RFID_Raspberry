@@ -146,7 +146,7 @@ while lectura_continua:
             print "\n"    
             
             
-# ------------LECTURA SENSORES--------------------------
+# ------------LECTURA SENSORES (Ya se meterá en el código algo)--------------------------
 Humedad=sense.get_humidity()
 Temp1=sense.get_temperature_from_humidity()
 Temp2=sense.get_temperature_from_pressure()
