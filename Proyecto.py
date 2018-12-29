@@ -41,10 +41,10 @@ signal.signal(signal.SIGINT, end_read)
 print "Bienvenido"
 print "Presiona Ctrl-C para parar el proceso\n"
 
-# This loop keeps checking for chips. If one is near it will get the UID and authenticate
+# Bucle para obtener la ID de una tarjeta siempre que se acerque al lector RFID
 while lectura_continua:
     
-    # Scan for cards    
+    # Scan    
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
 
     # SI encontramos tarjeta, lo imprimimos por pantalla
