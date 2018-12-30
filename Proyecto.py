@@ -7,6 +7,7 @@ import MFRC522
 import signal
 import time
 import smtplib
+import telebot
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -16,12 +17,15 @@ from sense_hat import SenseHat
 
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "xxxxxx@gmail.com"
-direccion_destino = "xxx@gmail.com"
+direccion_fuente = "ajtv7777777@gmail.com"
+direccion_destino = "ajtv7777777@gmail.com"
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
 MIFAREReader = MFRC522.MFRC522()
+chatid = '701895569'
+TOKEN = '696629732:AAFYMI-OB67XU9r-9umdaFuaELg-WV6T1mM'
+tb = telebot.TeleBot(TOKEN)
 
 # Variable para hacer el bucle de lecturas de tarjetas RFID
 lectura_continua = True
@@ -80,15 +84,26 @@ while lectura_continua:
             time.sleep(1)
             
             # Mensaje de bienvenida por pantalla y por Sense Hat
-            print "Bienvenido a casa\n"
+            print "¡¡Bienvenido a casa¡¡"
             sense.show_message('BIENVENIDO',text_colour=[100,100,100], scroll_speed = 0.05)
 
             # Medida de temperatura
             Temp1=sense.get_temperature_from_humidity()
-            print("La temperatura es de: %.2f" % (Temp1))
+            T1=float(round(Temp1,2))
+            print("La temperatura es de: %.2f\n" % (Temp1))
             TStr=str(round(Temp1,2))
             sense.show_message("TEMPERATURA: "+TStr, scroll_speed = 0.05)
-        
+
+            # Envío de mensajes de temperatura al móvil
+            if T1 < 20:
+                tb.send_message(chatid, '¡¡Bienvenido a casa!!. La temperatura ambiente es de '+TStr + '. Creo que deberías encender la calefacción.')
+
+            elif T1 > 32:
+                tb.send_message(chatid, '¡¡Bienvenido a casa!!. La temperatura ambiente es de '+TStr + '. Creo que deberías encender el aire acondicionado.')
+
+            else:
+                tb.send_message(chatid, '¡¡Bienvenido a casa!!. La temperatura ambiente es de '+TStr + '. Creo que la temperatura ambiente es ideal.')
+                 
         else:
             # Si no tiene esa ID la Sense Hat entera en rojo
             question_mark = [
@@ -123,10 +138,16 @@ while lectura_continua:
         
             sense.show_message('ACCESO DENEGADO',text_colour=[100,100,100], scroll_speed = 0.05)
 
+            # Envío alerta de seguridad al móvil
+            tb.send_message(chatid, '[Alerta de Seguridad] Intento de acceso a su casa')
+            tb.send_message(chatid, 'Se ha recibido una alerta de que alguien sin permiso de autorización ha intentado acceder a su casa el' + time.strftime("%d %b %Y a las %H:%M:%S. Por favor, no responda a este mensaje, se trata de un mensaje automatizado y solo se ha enviado para informar de la alerta."))
+            photo = open('/home/pi/git/proyecto_asignatura/Proyecto/imagen.jpg', 'rb')
+            tb.send_photo(chatid, photo)
+
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "xxxx")
+            server.login(direccion_fuente, "sdaaMIERA")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
@@ -151,4 +172,4 @@ while lectura_continua:
                 server.quit()
             print "\n"    
 
-   
+    
