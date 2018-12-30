@@ -147,7 +147,7 @@ while lectura_continua:
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "sdaaMIERA")
+            server.login(direccion_fuente, "xxxxXXXXX")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
