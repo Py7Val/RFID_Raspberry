@@ -16,8 +16,8 @@ from sense_hat import SenseHat
 
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "ajtv7777777@gmail.com"
-direccion_destino = "ajtv7777777@gmail.com"
+direccion_fuente = "xxxxxx@gmail.com"
+direccion_destino = "xxx@gmail.com"
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
@@ -126,7 +126,7 @@ while lectura_continua:
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "sdaaMIERA")
+            server.login(direccion_fuente, "xxxx")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
@@ -151,4 +151,4 @@ while lectura_continua:
                 server.quit()
             print "\n"    
 
-    
+   
