@@ -16,8 +16,8 @@ from sense_hat import SenseHat
 
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "xxx@gmail.com"
-direccion_destino = "xxx@gmail.com"
+direccion_fuente = "ajtv7777777@gmail.com"
+direccion_destino = "ajtv7777777@gmail.com"
 
 # Creamos objeto de Sense Hat y del RFID
 sense=SenseHat()
@@ -41,10 +41,10 @@ signal.signal(signal.SIGINT, end_read)
 print "Bienvenido"
 print "Presiona Ctrl-C para parar el proceso\n"
 
-# Bucle para obtener la ID de una tarjeta siempre que se acerque al lector RFID
+# This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while lectura_continua:
     
-    # Scan    
+    # Scan for cards    
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
 
     # SI encontramos tarjeta, lo imprimimos por pantalla
@@ -82,6 +82,12 @@ while lectura_continua:
             # Mensaje de bienvenida por pantalla y por Sense Hat
             print "Bienvenido a casa\n"
             sense.show_message('BIENVENIDO',text_colour=[100,100,100], scroll_speed = 0.05)
+
+            # Medida de temperatura
+            Temp1=sense.get_temperature_from_humidity()
+            print("La temperatura es de: %.2f" % (Temp1))
+            TStr=str(round(Temp1,2))
+            sense.show_message("TEMPERATURA: "+TStr, scroll_speed = 0.05)
         
         else:
             # Si no tiene esa ID la Sense Hat entera en rojo
@@ -120,7 +126,7 @@ while lectura_continua:
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "xxxxXXXXX")
+            server.login(direccion_fuente, "sdaaMIERA")
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
@@ -144,20 +150,5 @@ while lectura_continua:
                 print "Error al enviar el correo"
                 server.quit()
             print "\n"    
-            
-            
-# ------------LECTURA SENSORES (Ya se meterá en el código algo)--------------------------
-Humedad=sense.get_humidity()
-Temp1=sense.get_temperature_from_humidity()
-Temp2=sense.get_temperature_from_pressure()
-Presion=sense.get_pressure()
-print("Humedad: %2.3f" %Humedad)
-print("Temperaturas: %2.3f %2.3f" % (Temp1,Temp2))
-print("Presión: %4.2f" %Presion)
 
-TStr=str(round(Temp1,2))
-sense.show_message("T:"+TStr)
-HStr=str(round(Humedad,2))
-sense.show_message("H:"+HStr)
-PStr=str(round(Presion,2))
-sense.show_message("P:"+PStr)       
+    
