@@ -22,8 +22,8 @@ from sense_hat import SenseHat
 # Definimos variables de leds de Sense Hat y direcciones email para alerta de seguridad
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "prlab201819@gmail.com"
-direccion_destino = "viktor4194@gmail.com"
+email_from = "prlab201819@gmail.com"
+email_to = "viktor4194@gmail.com"
 recording_time = 10
 
 # Creamos objeto de Sense Hat, del RFID y definimos TOKEN e ID de conversación de Telegram
@@ -152,8 +152,7 @@ while lectura_continua:
             
             while (dt.datetime.now() - start).seconds < recording_time:
                 camera.annotate_text = dt.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-                camera.wait_recording(.2)
-                      
+                camera.wait_recording(.2)          
             camera.stop_recording()
             camera.stop_preview()
             camera.close()
