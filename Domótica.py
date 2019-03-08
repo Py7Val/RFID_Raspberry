@@ -163,30 +163,24 @@ while lectura_continua:
             output = subprocess.check_output(command, stderr=subprocess.STDOUT)
             print("¡Conversión satisfactoria! Enviando archivo...")
             
-            # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(direccion_fuente, "xxxxXXXXX")
+            # Envio correo electrónico con aviso de seguridad y adjuntando el vídeo hecho
+            adjunto = open(sendname, "rb")
             msg = MIMEMultipart()
-            msg['From'] = direccion_fuente
-            msg['To'] = direccion_destino
-            msg['Subject'] = "[Alerta de Seguridad] Intento de acceso a su casa"
-            # Configuramos el cuerpo de mensaje y adjuntamos la imagen hecha
-            cuerpo_mensaje = "Se ha recibido una alerta de que alguien sin permiso de autorización ha intentado acceder a su casa el " + time.strftime("%d %b %Y a las %H:%M:%S. Por favor, no responda a este mensaje, se trata de un mensaje automatizado y solo se ha enviado para informar de la alerta.")
-            msg.attach(MIMEText(cuerpo_mensaje, 'plain'))
-            archivo = "imagen.jpg"
-            adjunto = open(archivo, "rb")
+            msg['From'] = email_from
+            msg['To'] = email_to
+            msg['Subject'] = "INTRUSO DETECTADO"
+            email_body = "¡Intruso capturado! Ver archivo adjunto."
+            msg.attach(MIMEText(email_body, 'plain'))
             part = MIMEBase('application', 'octet-stream')
             part.set_payload((adjunto).read())
             encoders.encode_base64(part)
-            part.add_header('Content-Disposition', "attachment; filename= %s" % archivo)
+            part.add_header('Content-Disposition', "attachment; filename= %s" % os.path.basename("intruso.mp4"))
             msg.attach(part)
-            texto = msg.as_string()
-            try:
-                print "Enviando alerta de seguridad al correo"
-                print server.sendmail(direccion_fuente, direccion_destino, texto)
-                server.quit()
-            except:
-                print "Error al enviar el correo"
-                server.quit()
-            print "\n"
+            mailServer=smtplib.SMTP("smtp.gmail.com", 587)
+            mailServer.ehlo()
+            mailServer.starttls()
+            mailServer.ehlo()
+            mailServer.login(email_from, "romram1819")
+            mailServer.sendmail(email_from, email_to, msg.as_string())
+            mailServer.close()
+            print("¡Correo enviado!")
