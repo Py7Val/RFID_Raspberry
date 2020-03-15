@@ -18,8 +18,8 @@ from sense_hat import SenseHat
 # Definimos variables de leds de Sense Hat y direcciones email para alerta de seguridad
 R = [255, 0, 0]  # Rojo
 G = [0, 255, 0]  # Verde
-direccion_fuente = "ajtv7777777@gmail.com"
-direccion_destino = "ajtv7777777@gmail.com"
+direccion_fuente = "xxxxxxxxxxx@gmail.com"
+direccion_destino = "xxxxxxxxxxx@gmail.com" ## Sustituir las X por las direcciones fuente y destino 
 
 # Creamos objeto de Sense Hat, del RFID y definimos TOKEN e ID de conversación de Telegram
 sense=SenseHat()
@@ -154,7 +154,7 @@ while lectura_continua:
             # Envio correo electrónico con aviso de seguridad y adjuntando la foto hecha
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(direccion_fuente, "xxxxXXXXX")
+            server.login(direccion_fuente, "xxxxXXXXX") ## Sustituit las X por la contraseña de nuestro correo
             msg = MIMEMultipart()
             msg['From'] = direccion_fuente
             msg['To'] = direccion_destino
